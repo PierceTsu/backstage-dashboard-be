@@ -1,0 +1,9 @@
+server:
+  port: 8888
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.16.10.251:3306/stat?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    username: hnb
+    password: alyHnb2015
+salt: test
