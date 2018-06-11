@@ -12,15 +12,15 @@
 * url配置控制鉴权(粗粒度)与注解控制授权(细粒度)二者结合实现权限管理
 
 ## TODO
-- [] 部署
-    - [] 基于session
-    - [] 基于token
+- [ ] 部署
+    - [ ] 基于session
+    - [ ] 基于token
 
 ### FE
 - [x] element-ui
 - [x] vue-router
 - [x] vuex
-- [] 整合vue-echarts
+- [ ] 整合vue-echarts
 
 ### BE
 - [x] MyBatis-Generator
@@ -29,8 +29,8 @@
 - [x] 多环境配置
 - [x] 验证码
 - [x] 密码盐值
-- [] 权限缓存
-- [] 使用JWT进行鉴权
+- [ ] 权限缓存
+- [ ] 使用JWT进行鉴权
 
 ## 参考
 * [RBAC新解](http://globeeip.iteye.com/blog/1236167)
