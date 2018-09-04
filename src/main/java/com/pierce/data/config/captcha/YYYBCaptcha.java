@@ -1,11 +1,10 @@
 package com.pierce.data.config.captcha;
 
-import com.pierce.data.common.Const;
+import com.pierce.data.common.constant.SysConst;
 import com.pierce.data.utils.IOUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
-
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -54,7 +53,7 @@ public class YYYBCaptcha {
     public void generate(HttpServletResponse response, String code) {
         //保存session
         Session session = SecurityUtils.getSubject().getSession();
-        session.setAttribute(Const.SESSION_IMG_CODE, code);
+        session.setAttribute(SysConst.SESSION_IMG_CODE, code);
 
         response.setHeader("Pragma","no-cache");
         response.setHeader("Cache-Control","no-cache");

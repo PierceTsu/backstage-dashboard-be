@@ -1,6 +1,6 @@
 package com.pierce.data.config.shiro;
 
-import com.pierce.data.common.Const;
+import com.pierce.data.common.constant.SysConst;
 import com.pierce.data.pojo.dashboard.User;
 import com.pierce.data.service.IUserService;
 import com.pierce.data.vo.UserPermissionVo;
@@ -37,7 +37,7 @@ public class CustomerRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         Session session = SecurityUtils.getSubject().getSession();
-        UserPermissionVo userPermissionVo = (UserPermissionVo) session.getAttribute(Const.SESSION_USER_PERMISSION);
+        UserPermissionVo userPermissionVo = (UserPermissionVo) session.getAttribute(SysConst.SESSION_USER_PERMISSION);
         if (null == userPermissionVo) {
             return null;
         }
@@ -58,8 +58,6 @@ public class CustomerRealm extends AuthorizingRealm {
         //盐值
         ByteSource credentialsSalt = ByteSource.Util.bytes(salt);
 
-        //保存session
-        SecurityUtils.getSubject().getSession().setAttribute(Const.SESSION_USER_INFO, token.getUsername());
         return new SimpleAuthenticationInfo(user, user.getPassword(),credentialsSalt, getName());
     }
 }
