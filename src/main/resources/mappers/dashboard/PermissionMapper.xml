@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pierce.data.dao.dashboard.PermissionMapper">
+    <sql id="Base_Column_List">
+        id, router_id, menu_code, permission_code, permission_name, create_time, update_time
+    </sql>
+    <resultMap id="BaseResultMap" type="com.pierce.data.pojo.dashboard.Permission">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="router_id" jdbcType="INTEGER" property="routerId" />
+        <result column="menu_code" jdbcType="VARCHAR" property="menuCode" />
+        <result column="permission_code" jdbcType="VARCHAR" property="permissionCode" />
+        <result column="permission_name" jdbcType="VARCHAR" property="permissionName" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <resultMap id="ResourceTreeMap" type="com.pierce.data.vo.sys.ResourceTreeVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="pname" jdbcType="VARCHAR" property="name" />
+        <collection property="children" ofType="com.pierce.data.vo.sys.ResourceTreeVo">
+            <id column="pid" property="id"/>
+            <result column="cname" jdbcType="VARCHAR" property="name"/>
+            <collection property="children" ofType="com.pierce.data.vo.sys.ResourceTreeVo">
+                <id column="cid" jdbcType="INTEGER" property="id"/>
+                <result column="permission_name" jdbcType="VARCHAR" property="name"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+      delete from sys_permission
+      where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.pierce.data.pojo.dashboard.Permission">
+        insert into sys_permission (id, router_id, menu_code, permission_code, permission_name, create_time, update_time)
+        values (#{id,jdbcType=INTEGER}, #{routerId,jdbcType=INTEGER}, #{menuCode,jdbcType=VARCHAR},
+          #{permissionCode,jdbcType=VARCHAR}, #{permissionName,jdbcType=VARCHAR}, now(), now()
+        )
+     </insert>
+    <update id="updateByPrimaryKey" parameterType="com.pierce.data.pojo.dashboard.Permission">
+        update sys_permission
+        set router_id = #{routerId, jdbcType=INTEGER}
+          menu_code = #{menuCode,jdbcType=VARCHAR},
+          permission_code = #{permissionCode,jdbcType=VARCHAR},
+          permission_name = #{permissionName,jdbcType=VARCHAR},
+          update_time = now()
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.pierce.data.pojo.dashboard.Permission">
+        UPDATE sys_permission
+        <set>
+            <if test="routerId != null">
+                router_id = #{routerId},
+            </if>
+            <if test="permissionCode != null">
+                permission_code = #{permissionCode},
+            </if>
+            <if test="permissionName != null">
+                permission_name = #{permissionName},
+            </if>
+        </set>
+        ,update_time = now()
+        WHERE id = #{id}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_permission
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_permission
+    </select>
+    <select id="getAllPermissions" resultType="java.lang.String">
+        select
+        permission_code
+        from sys_permission
+        order by id
+    </select>
+    <select id="getUserPermissionsById" resultType="java.lang.String">
+        SELECT
+        d.permission_code
+        FROM
+        (SELECT
+        id
+        FROM sys_user
+        WHERE id = #{userId}) a
+        LEFT JOIN sys_user_role b
+        ON a.id = b.user_id
+        LEFT JOIN sys_role_permission c
+        ON b.role_id = c.role_id
+        LEFT JOIN sys_permission d
+        ON c.permission_id = d.id
+      </select>
+    <select id="getPermissionsByRouterId" resultType="java.lang.String">
+        select
+        permission_code
+        from sys_permission
+        where router_id = #{routerId}
+      </select>
+    <select id="getPermissionsByRolesAndRouterId" resultType="java.lang.String">
+        SELECT
+        b.permission_code
+        FROM
+        (
+        SELECT DISTINCT
+        permission_id
+        FROM
+        sys_role_permission
+        WHERE
+        role_id IN
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        ) a
+        INNER JOIN (
+        SELECT
+        id,
+        permission_code
+        FROM
+        sys_permission
+        WHERE
+        router_id = #{routerId}
+        ) b ON a.permission_id = b.id
+    </select>
+    <select id="getAllResourceTree" resultMap="ResourceTreeMap">
+        SELECT
+            a.id id,
+            a.name pname,
+            b.id pid,
+            b.name cname,
+            c.id cid,
+            c.permission_name
+        FROM
+            sys_router a
+        INNER JOIN sys_router b ON a.id = b.parent_id
+        INNER JOIN sys_permission c ON b.id = c.router_id
+        WHERE a.locked = 0
+      </select>
+    <select id="selectByRouterId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_permission
+        WHERE router_id = #{routerId}
+    </select>
+    <select id="countByRouterId" resultType="java.lang.Integer">
+        SELECT
+        COUNT(1)
+        FROM sys_permission
+        WHERE router_id = #{routerId}
+    </select>
+</mapper>

@@ -1,9 +1,32 @@
 server:
-  port: 8888
+  port: 8866
 spring:
   datasource:
-    driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://172.16.10.251:3306/stat?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
-    username: hnb
-    password: alyHnb2015
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      max-active: 15
+    # d_dashboard
+    dDashboard:
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.16.10.251:3306/d_dashboard?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true
+      username: root
+      password: root
+    # d_stat_conf
+    dStatConf:
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.16.10.251:3306/d_hf_stat_conf?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&autoReconnect=true
+      username: root
+      password: root
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: root
+    timeout: 5
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
 salt: test

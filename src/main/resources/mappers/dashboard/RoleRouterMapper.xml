@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pierce.data.dao.dashboard.RoleRouterMapper" >
+  <resultMap id="BaseResultMap" type="com.pierce.data.pojo.dashboard.RoleRouter" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="router_id" property="routerId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <insert id="insertBatch">
+      INSERT INTO sys_role_router (role_id, router_id, create_time, update_time)
+      VALUES
+      <foreach collection="routerIds" item="routerId" separator=",">
+        (#{roleId}, #{routerId}, now(), now())
+      </foreach>
+  </insert>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_role_router
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByRoleId">
+    DELETE FROM sys_role_router
+    WHERE role_id = #{id}
+  </delete>
+  <select id="countByRouterId" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1)
+    FROM sys_role_router
+    WHERE router_id = #{routerId}
+  </select>
+</mapper>

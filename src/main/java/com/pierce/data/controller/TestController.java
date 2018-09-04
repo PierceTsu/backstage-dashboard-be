@@ -1,26 +1,32 @@
 package com.pierce.data.controller;
 
 import com.pierce.data.common.ServerResponse;
-import com.pierce.data.config.captcha.HnbCaptcha;
-import com.pierce.data.dao.RoleMapper;
-import com.pierce.data.service.IUserService;
-import com.pierce.data.vo.RoleInfoVo;
+import com.pierce.data.config.captcha.YYYBCaptcha;
+import com.pierce.data.dao.dashboard.RolePermissionMapper;
+import com.pierce.data.dao.dashboard.RouterMapper;
+import com.pierce.data.dao.dashboard.UserMapper;
+import com.pierce.data.dao.dashboard.UserRoleMapper;
+import com.pierce.data.pojo.dashboard.Router;
+import com.pierce.data.service.*;
+import com.pierce.data.vo.sys.RoleRouterPermissionVo;
+import com.pierce.data.vo.sys.UserRolesVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * @Project : data
  * @Package Name : com.pierce.data.controller
  * @Description: TODO
  * @Author : piercetsu@gmail.com
- * @Create Date: 2018-05-31 23:50
+ * @Create Date: 2018-06-11
  */
 @Slf4j
-@RestController
+//@RestController
+@Controller
 @RequestMapping("/test")
 public class TestController {
 
@@ -28,12 +34,36 @@ public class TestController {
     private IUserService userService;
 
     @Autowired
-    private RoleMapper roleService;
+    private UserMapper userMapper;
 
-    @GetMapping("/user")
-    public ServerResponse test(@RequestParam(value = "pageNum", defaultValue = "1")int pageNum,
-                               @RequestParam(value = "pageSize", defaultValue = "10")int pageSize) {
-        return userService.listUser(pageNum, pageSize);
+    @Autowired
+    private RolePermissionMapper rolePermissionMapper;
+
+
+    @Autowired
+    private IRouterService routerService;
+
+    @Autowired
+    private RouterMapper routerMapper;
+
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    private IRoleService roleService;
+
+    @Autowired
+    private IResourceService resourceService;
+
+    @Validated
+    @PostMapping("/user")
+    public ServerResponse user(@Validated @RequestBody UserRolesVo userRolesVo) {
+        return ServerResponse.createBySuccess(userRolesVo);
+    }
+
+    @GetMapping("/{id}")
+    public ServerResponse<UserRolesVo> getUserDetailById(@PathVariable("id") Integer id) {
+        return userService.getUserDetailById(id);
     }
 
     @GetMapping("/log")
@@ -48,13 +78,19 @@ public class TestController {
 
     @GetMapping("/captcha.jpg")
     public void captcha(HttpServletResponse response) {
-        HnbCaptcha hnbCaptcha = new HnbCaptcha();
-        String code = hnbCaptcha.generateCode();
-        hnbCaptcha.generate(response, code);
+        YYYBCaptcha yyybCaptcha = new YYYBCaptcha();
+        String code = yyybCaptcha.generateCode();
+        yyybCaptcha.generate(response, code);
     }
 
-    @GetMapping("/listRole")
-    public ServerResponse<List<RoleInfoVo>> listRole() {
-        return ServerResponse.createBySuccess(roleService.getRoleList());
+    @PostMapping("/role")
+    public ServerResponse listRole(@Validated @RequestBody RoleRouterPermissionVo roleRouterPermissionVo) {
+        return roleService.savePermissions(roleRouterPermissionVo);
     }
+
+    @PostMapping("/router")
+    public ServerResponse listRouter(@Validated Router router) {
+        return routerService.updateRouter(router);
+    }
+
 }

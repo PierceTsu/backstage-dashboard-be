@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pierce.data.dao.dashboard.RoleMapper">
+    <sql id="Base_Column_List">
+      id, role_name, locked, create_time, update_time
+    </sql>
+    <resultMap id="BaseResultMap" type="com.pierce.data.pojo.dashboard.Role">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+        <result column="locked" jdbcType="INTEGER" property="locked" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <insert id="insert" parameterType="com.pierce.data.pojo.dashboard.Role">
+      INSERT INTO sys_role (id, role_name, locked, create_time, update_time)
+      VALUES (#{id}, #{roleName}, #{locked}, now(), now())
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.pierce.data.pojo.dashboard.Role">
+      update sys_role
+      set role_name = #{roleName},
+          locked = #{locked},
+          update_time = now()
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.pierce.data.pojo.dashboard.Role">
+        update sys_role
+        <set>
+            <if test="roleName != null">
+                role_name = #{roleName},
+            </if>
+            <if test="locked != null" >
+                locked = #{locked},
+            </if>
+        </set>
+        ,update_time = now()
+        where id = #{id}
+    </update>
+    <delete id="deleteByPrimaryKey">
+      DELETE FROM sys_role
+      WHERE id = #{id}
+    </delete>
+    <select id="selectByPrimaryKey" resultType="com.pierce.data.pojo.dashboard.Role">
+
+    </select>
+    <select id="selectAvailableRoles" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role
+        WHERE locked = 0
+    </select>
+    <select id="queryCountByRoleName" resultType="java.lang.Integer">
+      SELECT
+      count(1)
+      FROM sys_role
+      WHERE role_name = #{roleName}
+    </select>
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role
+        <where>
+            <if test="name != null">
+                role_name like "%"#{name}"%"
+            </if>
+        </where>
+        LIMIT #{pageStart}, #{pageSize}
+    </select>
+    <select id="countRoleByName" resultType="java.lang.Integer">
+        SELECT
+        count(1)
+        FROM sys_role
+        <where>
+            <if test="name != null">
+                role_name like "%"#{name}"%"
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,8 +1,16 @@
+server:
+  session:
+    cookie:
+      name: "YYYBSESSIONID"
 spring:
   profiles:
-    active: beta
+    active: dev
   main:
     bannerMode: "off"
+  mvc:
+    view:
+      suffix: .html
+      prefix: /
 mybatis:
    mapperLocations: classpath:/mappers/*.xml
    typeAliasesPackage: com.pierce.data.dao

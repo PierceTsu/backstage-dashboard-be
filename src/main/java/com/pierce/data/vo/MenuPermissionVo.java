@@ -1,7 +1,7 @@
 package com.pierce.data.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.pierce.data.pojo.Permission;
+import com.pierce.data.pojo.dashboard.Permission;
 
 import java.io.Serializable;
 import java.util.Set;

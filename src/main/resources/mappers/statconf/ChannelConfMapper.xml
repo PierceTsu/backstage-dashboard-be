@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pierce.data.dao.statconf.ChannelConfMapper">
+    <sql id="Base_Column_List">
+        f_id,f_name,f_code,f_parent_id,f_create_time,f_update_time
+    </sql>
+    <resultMap id="BaseResultMap" type="com.pierce.data.pojo.statconf.ChannelConf">
+        <id column="f_id" jdbcType="INTEGER" property="id" />
+        <result column="f_name" jdbcType="VARCHAR" property="name" />
+        <result column="f_code" jdbcType="VARCHAR" property="code" />
+        <result column="f_parent_id" jdbcType="INTEGER" property="parentId" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <resultMap id="ChannelCategory" type="com.pierce.data.vo.stat.StatConfCategoryVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="pname" jdbcType="VARCHAR" property="name" />
+        <collection property="children" ofType="com.pierce.data.vo.stat.StatConfCategoryVo">
+            <id column="cid" jdbcType="INTEGER" property="id" />
+            <result column="cname" jdbcType="VARCHAR" property="name" />
+        </collection>
+    </resultMap>
+    <select id="getChannelCategory" resultMap="ChannelCategory">
+        SELECT
+          a.f_id id,a.f_name pname,
+          b.f_id cid, b.f_name cname
+        FROM
+        (SELECT
+        f_id,f_name
+        FROM t_channel_conf
+        WHERE f_parent_id = 0) a
+        LEFT JOIN t_channel_conf b
+        ON a.f_id = b.f_parent_id
+        ORDER BY 1 ASC
+    </select>
+</mapper>

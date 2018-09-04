@@ -42,10 +42,14 @@ public class ShiroConfig {
         // 配置不会被拦截的链接 顺序判断
         filterChainDefinitionMap.put("/", "anon");
 
+        //swagger2配置
         filterChainDefinitionMap.put("/swagger-ui.html", "anon");
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
         filterChainDefinitionMap.put("/v2/api-docs", "anon");
         filterChainDefinitionMap.put("/webjars/springfox-swagger-ui/**", "anon");
+
+        //druid配置
+        filterChainDefinitionMap.put("/druid/**", "anon");
 
         filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/test/**", "anon");

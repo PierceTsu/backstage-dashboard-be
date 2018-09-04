@@ -7,7 +7,7 @@ import java.util.List;
  * @Package Name : com.pierce.data.vo
  * @Description: 分页vo
  * @Author : piercetsu@gmail.com
- * @Create Date: 2018-06-07 15:46
+ * @Create Date: 2018-06-11
  */
 public class PageInfoVo<T> {
 

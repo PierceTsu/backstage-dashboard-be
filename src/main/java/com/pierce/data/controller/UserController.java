@@ -1,11 +1,9 @@
 package com.pierce.data.controller;
 
 import com.pierce.data.common.ServerResponse;
-import com.pierce.data.pojo.Role;
-import com.pierce.data.pojo.User;
-import com.pierce.data.service.IRoleService;
 import com.pierce.data.service.IUserService;
 import com.pierce.data.vo.PageInfoVo;
+import com.pierce.data.vo.sys.UserRolesVo;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -15,14 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 /**
  * @Project : data
  * @Package Name : com.pierce.data.controller
- * @Description: 用户/角色/权限
+ * @Description: 用户管理
  * @Author : piercetsu@gmail.com
- * @Create Date: 2018-06-04 13:53
+ * @Create Date: 2018-06-11
  */
 @RestController
 @RequestMapping("/user")
@@ -31,59 +27,77 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private IRoleService roleService;
-
     /**
-     * 获取 用户列表
+     * 获取用户列表
      * @param pageNum
      * @param pageSize
      * @return
      */
-    @ApiOperation(value = "获取用户列表", notes ="获取用户列表, 权限user:list")
+    @ApiOperation(value = "获取用户列表", notes ="获取用户列表, 权限user:read")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "页码", required = true , dataType = "int"),
             @ApiImplicitParam(name = "pageSize", value = "每页条数", required = true, dataType = "int")
     })
-    @RequiresPermissions("user:list")
+    @RequiresPermissions("user:read")
     @PostMapping("/list")
-    public ServerResponse<PageInfoVo> userList(@RequestParam(value = "pageNum", defaultValue = "1")int pageNum,
+    public ServerResponse<PageInfoVo> userList(@RequestParam(required = false)String name,
+                                               @RequestParam(value = "pageNum", defaultValue = "1")int pageNum,
                                                @RequestParam(value = "pageSize", defaultValue = "10")int pageSize) {
-        return userService.listUser(pageNum, pageSize);
+        return userService.listUser(name, pageNum, pageSize);
     }
 
     /**
-     * 新增用户
-     * @param user
+     * 添加用户和角色
+     * @param userRolesVo
      * @return
      */
-    @RequiresPermissions("user:add")
+    @RequiresPermissions("user:create")
     @PostMapping("/add")
-    public ServerResponse<String> addUser(@Validated User user) {
-        return userService.addUser(user);
+    public ServerResponse<String> addUser(@Validated @RequestBody UserRolesVo userRolesVo) {
+        return userService.addUserAndRoles(userRolesVo);
     }
 
     /**
      * 修改用户
-     * @param userId
-     * @param nickname
-     * @param password
-     * @param roleId
+     * @param userRolesVo
      * @return
      */
     @RequiresPermissions("user:update")
     @PostMapping("/update")
-    public ServerResponse updateUser(Integer userId, String nickname, String password, Integer roleId) {
-        return userService.updateUser(userId, nickname, password, roleId);
+    public ServerResponse updateUser(@Validated @RequestBody UserRolesVo userRolesVo) {
+        return userService.updateUser(userRolesVo);
     }
 
     /**
-     * 新增和修改用户时, 角色选择
+     * 修改用户密码
+     * @param userId
+     * @param pwd
      * @return
      */
-    @RequiresPermissions(value = {"user:add", "user:update"}, logical = Logical.OR)
-    @GetMapping("/getAllRoles")
-    public ServerResponse<List<Role>> getAllRoles() {
-        return roleService.getAllRoles();
+    @RequiresPermissions(value = {"user:create", "user:update"}, logical = Logical.AND)
+    @PostMapping("/changePwd")
+    public ServerResponse changePwd(@RequestParam()Integer userId, @RequestParam String pwd) {
+        return userService.changeUserPwdById(userId, pwd);
+    }
+
+    /**
+     * 用户删除
+     * @param id
+     * @return
+     */
+    @RequiresPermissions("user:delete")
+    @PostMapping("/remove")
+    public ServerResponse removeUser(Integer id) {
+        return userService.removeUserById(id);
+    }
+
+    /**
+     * 根据用户id获取详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public ServerResponse<UserRolesVo> getUserDetailById(@PathVariable("id") Integer id) {
+        return userService.getUserDetailById(id);
     }
 }

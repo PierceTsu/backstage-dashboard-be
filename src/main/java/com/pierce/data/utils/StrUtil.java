@@ -6,9 +6,9 @@ import org.apache.shiro.util.ByteSource;
 /**
  * @Project : data
  * @Package Name : com.pierce.data.utils
- * @Description: TODO
+ * @Description: 字符串工具类
  * @Author : piercetsu@gmail.com
- * @Create Date: 2018-06-11 10:45
+ * @Create Date: 2018-06-11
  */
 public class StrUtil {
 

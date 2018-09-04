@@ -1,7 +1,7 @@
 package com.pierce.data.config.shiro;
 
 import com.pierce.data.common.Const;
-import com.pierce.data.pojo.User;
+import com.pierce.data.pojo.dashboard.User;
 import com.pierce.data.service.IUserService;
 import com.pierce.data.vo.UserPermissionVo;
 import lombok.extern.slf4j.Slf4j;

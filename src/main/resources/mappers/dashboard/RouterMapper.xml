@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pierce.data.dao.dashboard.RouterMapper" >
+  <sql id="Base_Column_List">
+    id, name, code, url, parent_id, level, locked, display_order, properties, create_time, update_time
+  </sql>
+  <resultMap id="BaseMapper" type="com.pierce.data.pojo.dashboard.Router">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" />
+    <result column="code" property="code" />
+    <result column="url" property="url" />
+    <result column="parent_id" property="parentId" />
+    <result column="level" property="level" />
+    <result column="locked" property="locked" />
+    <result column="display_order" property="displayOrder" />
+    <result column="properties" property="properties" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+  </resultMap>
+  <insert id="insert" parameterType="com.pierce.data.pojo.dashboard.Router">
+    INSERT INTO sys_router (id, name, code, url, parent_id, level, locked, display_order, properties, create_time, update_time)
+    VALUES (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER},
+      #{level,jdbcType=INTEGER},#{locked,jdbcType=INTEGER},#{displayOrder,jdbcType=INTEGER},#{properties,jdbcType=VARCHAR}, now(), now()
+    )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.pierce.data.pojo.dashboard.Router">
+    UPDATE sys_router
+    SET `name` = #{name,jdbcType=VARCHAR},
+        code = #{code,jdbcType=VARCHAR},
+        url = #{url,jdbcType=VARCHAR},
+        parent_id = #{parentId,jdbcType=INTEGER},
+        `level` = #{level,jdbcType=INTEGER},
+        locked = #{locked,jdbcType=INTEGER},
+        display_order = #{displayOrder,jdbcType=INTEGER},
+        properties = #{properties,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
+    WHERE id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getRouterListByUserId" resultMap="BaseMapper">
+    SELECT
+      router.id,
+      router.`name`,
+      router.`code`,
+      router.url,
+      router.parent_id,
+      router.`level`,
+      router.locked,
+      router.display_order,
+      router.properties
+    FROM
+        sys_role_router rr
+    INNER JOIN sys_role role ON rr.role_id = role.id
+    INNER JOIN sys_router router ON rr.router_id = router.id
+    INNER JOIN sys_user_role ur ON role.id = ur.role_id
+    WHERE
+    ur.user_id = #{userId}
+    AND router.locked=0 AND role.locked=0
+    ORDER BY
+    router.display_order
+  </select>
+  <select id="getAllRouters" resultMap="BaseMapper">
+    select
+    <include refid="Base_Column_List"/>
+    from sys_router
+    where locked = 0
+  </select>
+  <select id="selectList" resultMap="BaseMapper">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM sys_router
+    <where>
+      <if test="name !=null">
+        name LIKE "%"#{name}"%"
+      </if>
+      LIMIT #{pageStart}, #{pageSize}
+    </where>
+  </select>
+  <select id="countByName" resultType="java.lang.Integer">
+    SELECT
+    COUNT(1)
+    FROM sys_router
+    <where>
+      <if test="name != null">
+        name like "%"#{name}"%"
+      </if>
+    </where>
+  </select>
+  <select id="selectAvailableRouterRoot" resultMap="BaseMapper">
+    SELECT
+    id,name,parent_id
+    FROM sys_router
+    WHERE parent_id = 0
+    AND locked = 0
+  </select>
+  <delete id="deleteByPrimaryKey">
+    DELETE FROM sys_router
+    WHERE id = #{id}
+  </delete>
+</mapper>

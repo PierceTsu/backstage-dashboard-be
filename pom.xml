@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>data</name>
-    <description>Stat project for HNB</description>
+    <description>Stat project for YYYB</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -22,6 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <druid-version>1.1.10</druid-version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,12 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid-version}</version>
         </dependency>
 
         <dependency>

@@ -2,22 +2,21 @@ package com.pierce.data.controller;
 
 import com.pierce.data.common.ResponseCode;
 import com.pierce.data.common.ServerResponse;
-import com.pierce.data.service.IPermissionService;
+import com.pierce.data.pojo.dashboard.Role;
 import com.pierce.data.service.IRoleService;
-import org.apache.commons.lang3.StringUtils;
+import com.pierce.data.vo.PageInfoVo;
+import com.pierce.data.vo.sys.RoleRouterPermissionVo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Project : data
  * @Package Name : com.pierce.data.controller
  * @Description: TODO
  * @Author : piercetsu@gmail.com
- * @Create Date: 2018-06-11 17:50
+ * @Create Date: 2018-06-11
  */
 @RestController
 @RequestMapping("/role")
@@ -26,41 +25,84 @@ public class RoleController {
     @Autowired
     private IRoleService roleService;
 
-    @Autowired
-    private IPermissionService permissionService;
-
     /**
-     * 角色列表
-     * @return
+     * 当前可用的角色列表
+     * @return json
      */
-    @RequiresPermissions("role:list")
-    @GetMapping("/list")
-    public ServerResponse listRole() {
-        return roleService.listRole();
+    @GetMapping("/all")
+    public ServerResponse getAvailableRoles() {
+        return roleService.getAvailableRoles();
     }
 
     /**
-     * 查询所有菜单的权限, 给角色分配权限时调用
-     * @return
+     * 分页查询所有角色
+     * @param name 角色名模糊查询
+     * @param pageNum 页码
+     * @param pageSize 每页条数
+     * @return json
      */
-    @RequiresPermissions("role:list")
-    @GetMapping("/listAllPermission")
-    public ServerResponse listAllPermissions() {
-        return permissionService.getAllMenuPermissions();
+    @RequiresPermissions("user:read")
+    @PostMapping("/list")
+    public ServerResponse<PageInfoVo> roleList(@RequestParam(required = false)String name,
+                                               @RequestParam(value = "pageNum", defaultValue = "1")int pageNum,
+                                               @RequestParam(value = "pageSize", defaultValue = "10")int pageSize) {
+        return roleService.listRoleByPage(name, pageNum, pageSize);
     }
 
     /**
-     * 添加角色权限, 多个权限id使用","拼接
-     * @param roleName
-     * @param permissionIds
-     * @return
+     * 添加角色权限
+     * @return json
      */
-    @RequiresPermissions("role:add")
+    @RequiresPermissions("role:create")
     @PostMapping("/add")
-    public ServerResponse add(String roleName, String permissionIds) {
-        if (StringUtils.isBlank(roleName) || StringUtils.isBlank(permissionIds)) {
+    public ServerResponse<String> add(@Validated Role role) {
+        return roleService.addRole(role);
+    }
+
+    /**
+     * 修改角色权限
+     * @return json
+     */
+    @RequiresPermissions("role:update")
+    @PostMapping("/update")
+    public ServerResponse<String> update(@Validated Role role) {
+        if (null == role) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.ILLEGAL_ARGS.getCode(), ResponseCode.ILLEGAL_ARGS.getDesc());
         }
-        return roleService.addRole(roleName, permissionIds);
+        if (role.getId() == null) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.ILLEGAL_ARGS.getCode(), ResponseCode.ILLEGAL_ARGS.getDesc());
+        }
+        return roleService.updateRole(role);
+    }
+
+    /**
+     * 删除角色
+     * @param id 角色id
+     * @return
+     */
+    @RequiresPermissions("role:delete")
+    @PostMapping("/remove")
+    public ServerResponse<String> delete(@RequestParam() Integer id) {
+        return roleService.removeRoleById(id);
+    }
+
+    /**
+     * 根据角色id查询所有权限
+     * @return
+     */
+    @PostMapping("/permissions")
+    public ServerResponse getPermissionsByRoleId(@RequestParam() Integer id) {
+        return roleService.getPermissionsByRoleId(id);
+    }
+
+    /**
+     * 保存角色权限
+     * @param roleRouterPermissionVo
+     * @return json
+     */
+    @RequiresPermissions("role:update")
+    @PostMapping("/savePermissions")
+    public ServerResponse savePermissions(@Validated @RequestBody RoleRouterPermissionVo roleRouterPermissionVo) {
+        return roleService.savePermissions(roleRouterPermissionVo);
     }
 }

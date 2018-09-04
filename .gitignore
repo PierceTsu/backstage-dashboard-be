@@ -23,3 +23,6 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+### 静态资源目录 ###
+/src/main/resources/public/

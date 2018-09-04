@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pierce.data.dao.statconf.AcquireActionConfMapper">
+    <sql id="Base_Column_List">
+        f_id,f_name,f_code,f_create_time,f_update_time
+    </sql>
+    <resultMap id="BaseResultMap" type="com.pierce.data.pojo.statconf.AcquireActionConf">
+        <id column="f_id" jdbcType="INTEGER" property="id" />
+        <result column="f_name" jdbcType="VARCHAR" property="name" />
+        <result column="f_code" jdbcType="VARCHAR" property="code" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        f_id,f_name
+        FROM t_acquire_action_conf
+    </select>
+</mapper>

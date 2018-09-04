@@ -1,6 +1,6 @@
 package com.pierce.data.vo;
 
-import com.pierce.data.pojo.User;
+import com.pierce.data.pojo.dashboard.User;
 
 import java.io.Serializable;
 import java.util.Set;

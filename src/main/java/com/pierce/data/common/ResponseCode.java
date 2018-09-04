@@ -12,6 +12,7 @@ public enum ResponseCode {
     SUCCESS(0, "SUCCESS"),
     ERROR(1, "ERROR"),
     NEED_LOGIN(10, "NEED_LOGIN"),
+    DELETE_ROLE_NO_ALLOW(20, "角色删除失败,尚有用户属于此角色"),
     LOGIN_OVERDUE(11, "登录过期, 请重新登录"),
     NOT_FOUND(404, "NOT_FOUND"),
     METHOD_NOT_SUPPORT(405, "METHOD_NOT_SUPPORT"),
